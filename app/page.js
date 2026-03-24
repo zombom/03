@@ -2,6 +2,70 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const VoiceNotePlayer = ({ src }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      // BOOST VOLUME TO 100% FOR TESTING
+      audioRef.current.volume = 1.0; 
+      // Force the audio to load immediately
+      audioRef.current.load();
+    }
+  }, [src]);
+
+  const togglePlay = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+      console.log("Audio Paused");
+    } else {
+      console.log("Attempting to play:", src);
+      audioRef.current.play()
+        .then(() => console.log("Playback started successfully!"))
+        .catch(e => {
+          console.error("Playback failed. Check if file exists in /public:", e);
+          alert("Can't hear anything? Make sure 'voicename.mp3' is inside the 'public' folder.");
+        });
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  return (
+    <div className="flex flex-col items-center space-y-4 p-6 border border-[#00ff41]/20 rounded-sm bg-[#0D0D0D] mb-12">
+      <div className="text-[10px] uppercase tracking-[0.3em] text-[#00ff41]/60">
+        Status: {isPlaying ? "Transmitting Audio..." : "Audio Signal Found"}
+      </div>
+      
+      <div className="flex items-center space-x-6">
+        <div className="relative w-10 h-10 flex items-center justify-center">
+          <motion.div 
+            animate={isPlaying ? { scale: [1, 1.6, 1], opacity: [0.5, 0.1, 0.5] } : {}}
+            transition={{ duration: 1, repeat: Infinity }}
+            className="absolute inset-0 rounded-full bg-[#00ff41]/30"
+          />
+          <div className={`w-2.5 h-2.5 rounded-full ${isPlaying ? 'bg-cyan-400' : 'bg-[#00ff41]'} shadow-[0_0_10px_#00ff41]`} />
+        </div>
+
+        <button 
+          onClick={togglePlay}
+          className="px-6 py-2 border border-[#00ff41] text-[#00ff41] text-[10px] uppercase tracking-widest hover:bg-[#00ff41] hover:text-black transition-all duration-300"
+        >
+          {isPlaying ? "Stop Decryption" : "Play Voice Memo"}
+        </button>
+      </div>
+
+      <audio 
+        ref={audioRef} 
+        src={src} 
+        preload="auto"
+        onEnded={() => setIsPlaying(false)}
+        className="hidden" 
+      />
+    </div>
+  );
+};
+
 // --- VOICE NOTE PLAYER COMPONENT ---
 const VoiceNotePlayer = ({ src }) => {
   const [isPlaying, setIsPlaying] = useState(false);
