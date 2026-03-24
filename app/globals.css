@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Using standard CSS instead of @apply to keep the linter happy */
+body {
+  background-color: black;
+  overflow: hidden;
+}
+
+.terminal-screen {
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+}
