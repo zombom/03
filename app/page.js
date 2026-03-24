@@ -2,12 +2,34 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// --- TYPEWRITER HELPER COMPONENT ---
+const Typewriter = ({ text, delay = 40, onComplete }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (index < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText((prev) => prev + text[index]);
+        setIndex((prev) => prev + 1);
+      }, delay);
+      return () => clearTimeout(timeout);
+    } else if (onComplete) {
+      onComplete();
+    }
+  }, [index, text, delay, onComplete]);
+
+  return <span>{displayedText}</span>;
+};
+
 export default function TerminalQuest() {
   const [input, setInput] = useState("");
   const [level, setLevel] = useState(1);
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [showSecondPara, setShowSecondPara] = useState(false);
   const inputRef = useRef(null);
   const scrollRef = useRef(null);
+  const audioRef = useRef(null);
 
   const [history, setHistory] = useState([
     { text: ">>> TERMINAL BOOT: MARCH 24, 2026", type: "sys" },
@@ -18,9 +40,11 @@ export default function TerminalQuest() {
     { text: "ENTER THE CODE-NAME (Other than Kaleshi):", type: "prompt" }
   ]);
 
-  // Keep focus on input so she can type immediately
   useEffect(() => {
     inputRef.current?.focus();
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5; // Soft background level
+    }
   }, [history]);
 
   const normalize = (str) => str.replace(/\s+/g, '').toLowerCase();
@@ -33,7 +57,10 @@ export default function TerminalQuest() {
 
       if (level === 1) {
         if (normIn === "zumzum") {
-          newHistory.push({ text: ">>> IDENTITY PARTIALLY VERIFIED. LOADING SECTOR 2...", type: "success" });
+          // --- AUDIO TRIGGER: Starts on 1st correct answer ---
+          audioRef.current.play().catch(() => console.log("Audio awaiting interaction"));
+          
+          newHistory.push({ text: ">>> IDENTITY PARTIALLY VERIFIED. AUDIO STREAM ESTABLISHED.", type: "success" });
           newHistory.push({ text: "LEVEL 2: Archive Locked. Enter the title of the movie we watched:", type: "prompt" });
           setLevel(2);
         } else {
@@ -70,6 +97,9 @@ export default function TerminalQuest() {
       className="min-h-screen bg-[#050505] text-[#00ff41] font-mono p-4 md:p-12 relative overflow-x-hidden selection:bg-[#00ff41] selection:text-black cursor-text"
       onClick={() => inputRef.current?.focus()}
     >
+      {/* Background Audio */}
+      <audio ref={audioRef} src="/voicename.mp3" loop />
+
       {/* CRT Scanline Layer */}
       <div className="fixed inset-0 pointer-events-none z-50 bg-size-[100%_2px,3px_100%] opacity-20" 
            style={{ backgroundImage: 'linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.25) 50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))' }} />
@@ -140,7 +170,7 @@ export default function TerminalQuest() {
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }} className="text-cyan-400 font-bold">[2026] Connection Fully Restored. No further encryption required.</motion.p>
               </div>
 
-              {/* FINAL LETTER */}
+              {/* FINAL LETTER WITH TYPEWRITER */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -149,15 +179,25 @@ export default function TerminalQuest() {
               >
                 <div className="space-y-6">
                   <p className="text-[#F9F7F2] text-lg md:text-xl font-serif italic leading-relaxed text-center">
-                    {"Through the glitches and the crashes, you’ve been the one constant."}
+                    <Typewriter 
+                      text="Through the glitches and the crashes, you’ve been the one constant." 
+                      delay={50}
+                      onComplete={() => setShowSecondPara(true)}
+                    />
                   </p>
-                  <p className="text-[#F9F7F2]/80 text-lg md:text-xl font-serif italic leading-relaxed text-center">
-                    {"I know I failed at being considerate lately, but I can't change the past, you're hurt I know but let's move forward please me guzra change nhi kar sakta per me khud ko change kar sakta hoon or kia bhi ha bhool jao please or wapis aa jao. You’re not just a 'Zumzum'; you’re the anchor. Delete the past and let's get back together."}
-                  </p>
+                  
+                  {showSecondPara && (
+                    <p className="text-[#F9F7F2]/80 text-lg md:text-xl font-serif italic leading-relaxed text-center">
+                      <Typewriter 
+                        text="I know I failed at being considerate lately, but I can't change the past, you're hurt I know but let's move forward please me guzra change nhi kar sakta per me khud ko change kar sakta hoon or kia bhi ha bhool jao please or wapis aa jao. You’re not just a 'Zumzum'; you’re the anchor. Delete the past and let's get back together." 
+                        delay={45}
+                      />
+                    </p>
+                  )}
                 </div>
                 
                 <div className="mt-12 flex justify-center">
-                  <div className="h-px w-20 bg-gradient-to-r from-transparent via-[#00ff41]/50 to-transparent" />
+                  <div className="h-px w-20 bg-linear-to-r from-transparent via-[#00ff41]/50 to-transparent" />
                 </div>
                 
                 <p className="mt-8 text-center text-[#00ff41] text-[9px] uppercase tracking-[0.8em] animate-pulse">
