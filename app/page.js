@@ -18,6 +18,7 @@ export default function TerminalQuest() {
     { text: "ENTER THE CODE-NAME (Other than Kaleshi):", type: "prompt" }
   ]);
 
+  // Keep focus on input so she can type immediately
   useEffect(() => {
     inputRef.current?.focus();
   }, [history]);
@@ -69,6 +70,7 @@ export default function TerminalQuest() {
       className="min-h-screen bg-[#050505] text-[#00ff41] font-mono p-4 md:p-12 relative overflow-x-hidden selection:bg-[#00ff41] selection:text-black cursor-text"
       onClick={() => inputRef.current?.focus()}
     >
+      {/* CRT Scanline Layer */}
       <div className="fixed inset-0 pointer-events-none z-50 bg-size-[100%_2px,3px_100%] opacity-20" 
            style={{ backgroundImage: 'linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.25) 50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))' }} />
       
@@ -113,6 +115,7 @@ export default function TerminalQuest() {
           >
             <div className="max-w-2xl mx-auto space-y-12 py-20">
               
+              {/* CLEARANCE HEADER */}
               <motion.div 
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -129,6 +132,7 @@ export default function TerminalQuest() {
                 </div>
               </motion.div>
 
+              {/* MEMORY LOGS */}
               <div className="space-y-4 font-mono text-[11px] text-[#00ff41]/50">
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>[2006] Initial Connection Established...</motion.p>
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}>[2012] System Stability Tested (The Blue Umbrella Incident)...</motion.p>
@@ -136,6 +140,7 @@ export default function TerminalQuest() {
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }} className="text-cyan-400 font-bold">[2026] Connection Fully Restored. No further encryption required.</motion.p>
               </div>
 
+              {/* FINAL LETTER */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -152,7 +157,7 @@ export default function TerminalQuest() {
                 </div>
                 
                 <div className="mt-12 flex justify-center">
-                  <div className="h-px w-20 bg-linear-to-r from-transparent via-[#00ff41]/50 to-transparent" />
+                  <div className="h-px w-20 bg-gradient-to-r from-transparent via-[#00ff41]/50 to-transparent" />
                 </div>
                 
                 <p className="mt-8 text-center text-[#00ff41] text-[9px] uppercase tracking-[0.8em] animate-pulse">
