@@ -2,62 +2,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- VOICE NOTE PLAYER COMPONENT (SINGLE DEFINITION) ---
-const VoiceNotePlayer = ({ src }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef(null);
-
-  // Set volume to 10% on load as per your request
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.1;
-    }
-  }, []);
-
-  const togglePlay = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(e => console.log("Playback failed:", e));
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  return (
-    <div className="flex flex-col items-center space-y-4 p-6 border border-[#00ff41]/20 rounded-sm bg-[#0D0D0D] mb-12">
-      <div className="text-[10px] uppercase tracking-[0.3em] text-[#00ff41]/60">
-        Audio File: DECRYPTED_VOICE_MEMO.MP3 (Vol: 10%)
-      </div>
-      
-      <div className="flex items-center space-x-6">
-        <div className="relative w-10 h-10 flex items-center justify-center">
-          <motion.div 
-            animate={isPlaying ? { scale: [1, 1.4, 1], opacity: [0.4, 0.1, 0.4] } : {}}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="absolute inset-0 rounded-full bg-[#00ff41]/20"
-          />
-          <div className={`w-2.5 h-2.5 rounded-full ${isPlaying ? 'bg-cyan-400' : 'bg-[#00ff41]'} shadow-[0_0_8px_#00ff41]`} />
-        </div>
-
-        <button 
-          onClick={togglePlay}
-          className="px-6 py-2 border border-[#00ff41] text-[#00ff41] text-[10px] uppercase tracking-widest hover:bg-[#00ff41] hover:text-black transition-all duration-300"
-        >
-          {isPlaying ? "Pause Memo" : "Play Memo"}
-        </button>
-      </div>
-
-      <audio 
-        ref={audioRef} 
-        src={src} 
-        onEnded={() => setIsPlaying(false)}
-        className="hidden" 
-      />
-    </div>
-  );
-};
-
-// --- MAIN TERMINAL COMPONENT ---
 export default function TerminalQuest() {
   const [input, setInput] = useState("");
   const [level, setLevel] = useState(1);
@@ -183,10 +127,6 @@ export default function TerminalQuest() {
                   Subject ID: ZUM-01<br/>
                   Status: Verified
                 </div>
-              </motion.div>
-
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
-                <VoiceNotePlayer src="/voicename.mp3" />
               </motion.div>
 
               <div className="space-y-4 font-mono text-[11px] text-[#00ff41]/50">
